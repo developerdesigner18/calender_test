@@ -3,7 +3,9 @@ import {
   ChangeDetectionStrategy,
   ViewChild,
   TemplateRef,
-} from '@angular/core';import { Router } from '@angular/router';
+  ViewEncapsulation,
+} from '@angular/core';
+import { Router } from '@angular/router';
 
 import {
   startOfDay,
@@ -45,7 +47,8 @@ const colors: any = {
   selector: 'app-calender',
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './calender.component.html',
-  styleUrls: ['./styles.css']
+  styles: ['../../styles.css'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class CalenderComponent{
   @ViewChild('modalContent', { static: true })
@@ -126,10 +129,7 @@ export class CalenderComponent{
   activeDayIsOpen: boolean = true;
 
  
-  constructor(public router : Router , private modal: NgbModal) {
-
-
-   }
+  constructor(private modal: NgbModal) {}
 
 
 
@@ -187,6 +187,10 @@ export class CalenderComponent{
     ];
   }
 
+  close(){
+
+  }
+
   deleteEvent(eventToDelete: CalendarEvent) {
     this.events = this.events.filter((event) => event !== eventToDelete);
   }
@@ -204,5 +208,3 @@ export class CalenderComponent{
   }
 
 }
-
-
