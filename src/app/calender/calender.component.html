@@ -1,1 +1,312 @@
-<p>calender works!</p>
+<div class="row text-center">
+	<div class="col-md-4">
+	  <div class="btn-group">
+		<div
+		  class="btn btn-primary"
+		  mwlCalendarPreviousView
+		  [view]="view"
+		  [(viewDate)]="viewDate"
+		  (viewDateChange)="closeOpenMonthViewDay()"
+		>
+		  Previous
+		</div>
+		<div
+		  class="btn btn-outline-secondary"
+		  mwlCalendarToday
+		  [(viewDate)]="viewDate"
+		>
+		  Today
+		</div>
+		<div
+		  class="btn btn-primary"
+		  mwlCalendarNextView
+		  [view]="view"
+		  [(viewDate)]="viewDate"
+		  (viewDateChange)="closeOpenMonthViewDay()"
+		>
+		  Next
+		</div>
+	  </div>
+	</div>
+	<div class="col-md-4">
+	  <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+	</div>
+	<div class="col-md-4">
+	  <div class="btn-group">
+		<div
+		  class="btn btn-primary"
+		  (click)="setView(CalendarView.Month)"
+		  [class.active]="view === CalendarView.Month"
+		>
+		  Month
+		</div>
+		<div
+		  class="btn btn-primary"
+		  (click)="setView(CalendarView.Week)"
+		  [class.active]="view === CalendarView.Week"
+		>
+		  Week
+		</div>
+		<div
+		  class="btn btn-primary"
+		  (click)="setView(CalendarView.Day)"
+		  [class.active]="view === CalendarView.Day"
+		>
+		  Day
+		</div>
+	  </div>
+	</div>
+  </div>
+  <br />
+  <div [ngSwitch]="view">
+	<mwl-calendar-month-view
+	  *ngSwitchCase="CalendarView.Month"
+	  [viewDate]="viewDate"
+	  [events]="events"
+	  [refresh]="refresh"
+	  [activeDayIsOpen]="activeDayIsOpen"
+	  (dayClicked)="dayClicked($event.day)"
+	  (eventClicked)="handleEvent('Clicked', $event.event)"
+	  (eventTimesChanged)="eventTimesChanged($event)"
+	>
+	</mwl-calendar-month-view>
+	<mwl-calendar-week-view
+	  *ngSwitchCase="CalendarView.Week"
+	  [viewDate]="viewDate"
+	  [events]="events"
+	  [refresh]="refresh"
+	  (eventClicked)="handleEvent('Clicked', $event.event)"
+	  (eventTimesChanged)="eventTimesChanged($event)"
+	>
+	</mwl-calendar-week-view>
+	<mwl-calendar-day-view
+	  *ngSwitchCase="CalendarView.Day"
+	  [viewDate]="viewDate"
+	  [events]="events"
+	  [refresh]="refresh"
+	  (eventClicked)="handleEvent('Clicked', $event.event)"
+	  (eventTimesChanged)="eventTimesChanged($event)"
+	>
+	</mwl-calendar-day-view>
+  </div>
+  
+  <!-- Everything you see below is just for the demo, you don't need to include it in your app -->
+  
+  <br /><br /><br />
+  
+  <h3>
+	Edit events
+	<button class="btn btn-primary float-right" (click)="addEvent()">
+	  Add new
+	</button>
+	<div class="clearfix"></div>
+  </h3>
+  
+  <div class="table-responsive">
+	<table class="table table-bordered">
+	  <thead>
+		<tr>
+		  <th>Title</th>
+		  <th>Primary color</th>
+		  <th>Secondary color</th>
+		  <th>Starts at</th>
+		  <th>Ends at</th>
+		  <th>Remove</th>
+		</tr>
+	  </thead>
+  
+	  <tbody>
+		<tr *ngFor="let event of events">
+		  <td>
+			<input
+			  type="text"
+			  class="form-control"
+			  [(ngModel)]="event.title"
+			  (keyup)="refresh.next()"
+			/>
+		  </td>
+		  <td>
+			<!-- <input
+			  type="color"
+			  [(ngModel)]="event.color.primary"
+			  (change)="refresh.next()"
+			/> -->
+		  </td>
+		  <td>
+			<!-- <input
+			  type="color"
+			  [(ngModel)]="event.color.secondary"
+			  (change)="refresh.next()"
+			/> -->
+		  </td>
+		  <td>
+			<input
+			  class="form-control"
+			  type="text"
+			  mwlFlatpickr
+			  [(ngModel)]="event.start"
+			  (ngModelChange)="refresh.next()"
+			  [altInput]="true"
+			  [convertModelValue]="true"
+			  [enableTime]="true"
+			  dateFormat="Y-m-dTH:i"
+			  altFormat="F j, Y H:i"
+			  placeholder="Not set"
+			/>
+		  </td>
+		  <td>
+			<input
+			  class="form-control"
+			  type="text"
+			  mwlFlatpickr
+			  [(ngModel)]="event.end"
+			  (ngModelChange)="refresh.next()"
+			  [altInput]="true"
+			  [convertModelValue]="true"
+			  [enableTime]="true"
+			  dateFormat="Y-m-dTH:i"
+			  altFormat="F j, Y H:i"
+			  placeholder="Not set"
+			/>
+		  </td>
+		  <td>
+			<button class="btn btn-danger" (click)="deleteEvent(event)">
+			  Delete
+			</button>
+		  </td>
+		</tr>
+	  </tbody>
+	</table>
+  </div>
+  
+  <ng-template #modalContent let-close="close">
+	<div class="modal-header">
+	  <h5 class="modal-title">Event action occurred</h5>
+	  <button type="button" class="close" (click)="close()">
+		<span aria-hidden="true">&times;</span>
+	  </button>
+	</div>
+	<div class="modal-body">
+	  <div>
+		Action:
+		<pre>{{ modalData?.action }}</pre>
+	  </div>
+	  <div>
+		Event:
+		<pre>{{ modalData?.event | json }}</pre>
+	  </div>
+	</div>
+	<div class="modal-footer">
+	  <button type="button" class="btn btn-outline-secondary" (click)="close()">
+		OK
+	  </button>
+	</div>
+  </ng-template>
+
+
+
+
+  <!-- 
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Date Table</title>
+
+	<style type="text/css">
+	table {
+		width: 50%;
+		border: 2px solid #000;
+		box-sizing: border-box;
+		border-spacing: 0px;
+	}
+    table thead th {
+    font-weight: bold;
+    padding: 0px 5px;
+    border-right: 2px solid #000;
+    border-bottom: 2px solid #000;
+    background: #CCCCCC;
+}
+	table thead th:last-child {
+		border-right: none;		
+	}
+	table tbody td {
+		padding: 5px 5px;
+		border-right: 2px solid #000;
+		border-bottom: 2px solid #000;
+		height: 50px;
+		vertical-align: top;
+	}
+	table tbody tr:last-child td {
+		border-bottom: none;				
+	}
+	table tbody td:last-child {
+		border-right: none;		
+	}
+</style>
+</head>
+<body>
+	<div style="overflow-x:auto;">
+		<table>
+			<thead>
+				<tr>
+					<th>Sun</th>
+					<th>Mon</th>
+					<th>Tue</th>
+					<th>Wed</th>
+					<th>Thu</th>
+					<th>Fri</th>
+					<th>Sat</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>1</td>
+					<td>2</td>
+					<td>3</td>
+					<td>4</td>
+					<td>5</td>
+					<td>6</td>
+					<td>7</td>
+				</tr>
+				<tr>
+					<td>8</td>
+					<td>9</td>
+					<td>10</td>
+					<td>11</td>
+					<td>12</td>
+					<td>13</td>
+					<td>14</td>
+				</tr>
+				<tr>
+					<td>15</td>
+					<td>16</td>
+					<td>17</td>
+					<td>18</td>
+					<td>19</td>
+					<td>20</td>
+					<td>21</td>
+				</tr>
+				<tr>
+					<td>22</td>
+					<td>23</td>
+					<td>24</td>
+					<td>25</td>
+					<td>26</td>
+					<td>27</td>
+					<td>28</td>
+				</tr>
+				<tr>
+					<td>29</td>
+					<td>30</td>
+					<td>31</td>
+					<td style="background: #CCCCCC;"></td>
+					<td style="background: #CCCCCC;"></td>
+					<td style="background: #CCCCCC;"></td>
+					<td style="background: #CCCCCC;"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+</html> -->
