@@ -27,21 +27,6 @@ import {
   CalendarView,
 } from 'angular-calendar';
 
-const colors: any = {
-  red: {
-    primary: '#ad2121',
-    secondary: '#FAE3E3',
-  },
-  blue: {
-    primary: '#1e90ff',
-    secondary: '#D1E8FF',
-  },
-  yellow: {
-    primary: '#e3bc08',
-    secondary: '#FDF1BA',
-  },
-};
-
 
 @Component({
   selector: 'app-calender',
@@ -55,12 +40,11 @@ export class CalenderComponent{
   modalContent!: TemplateRef<any>;
 
   view: CalendarView = CalendarView.Month;
-
   CalendarView = CalendarView;
-
   viewDate: Date = new Date();
+  colors:any = [];
 
-  modalData!: {
+   modalData!: {
     action: string;
     event: CalendarEvent;
   };
@@ -90,7 +74,7 @@ export class CalenderComponent{
       start: subDays(startOfDay(new Date()), 1),
       end: addDays(new Date(), 1),
       title: 'A 3 day event',
-      color: colors.red,
+      color: this.colors.red,
       actions: this.actions,
       allDay: true,
       resizable: {
@@ -102,21 +86,21 @@ export class CalenderComponent{
     {
       start: startOfDay(new Date()),
       title: 'An event with no end date',
-      color: colors.yellow,
+      color: this.colors.yellow,
       actions: this.actions,
     },
     {
       start: subDays(endOfMonth(new Date()), 3),
       end: addDays(endOfMonth(new Date()), 3),
       title: 'A long event that spans 2 months',
-      color: colors.blue,
+      color: this.colors.blue,
       allDay: true,
     },
     {
       start: addHours(startOfDay(new Date()), 2),
       end: addHours(new Date(), 2),
       title: 'A draggable and resizable event',
-      color: colors.yellow,
+      color: this.colors.yellow,
       actions: this.actions,
       resizable: {
         beforeStart: true,
@@ -129,7 +113,24 @@ export class CalenderComponent{
   activeDayIsOpen: boolean = true;
 
  
-  constructor(private modal: NgbModal) {}
+  constructor(public modal: NgbModal) {
+
+    this.colors = {
+      red: {
+        primary: '#ad2121',
+        secondary: '#FAE3E3',
+      },
+      blue: {
+        primary: '#1e90ff',
+        secondary: '#D1E8FF',
+      },
+      yellow: {
+        primary: '#e3bc08',
+        secondary: '#FDF1BA',
+      },
+    };
+    
+  }
 
 
 
@@ -177,7 +178,7 @@ export class CalenderComponent{
         title: 'New event',
         start: startOfDay(new Date()),
         end: endOfDay(new Date()),
-        color: colors.red,
+        color: this.colors.red,
         draggable: true,
         resizable: {
           beforeStart: true,

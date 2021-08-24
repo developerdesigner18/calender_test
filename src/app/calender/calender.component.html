@@ -108,9 +108,7 @@
 		<tr>
 		  <th>Title</th>
 		  <th>Primary color</th>
-		  <th>Secondary color</th>
 		  <th>Starts at</th>
-		  <th>Ends at</th>
 		  <th>Remove</th>
 		</tr>
 	  </thead>
@@ -125,33 +123,11 @@
 			  (keyup)="refresh.next()"
 			/>
 		  </td>
-		  <!-- <td>
-			<input
-			  type="color"
-			  [(ngModel)]="event.color.primary"
-			  (change)="refresh.next()"
-			/>
-		  </td> -->
-		  <!-- <td>
-			<input
-			  type="color"
-			  [(ngModel)]="event.color.secondary"
-			  (change)="refresh.next()"
-			/>
-		  </td> -->
 		  <td>
 			<input
-			  class="form-control"
-			  type="text"
-			  mwlFlatpickr
-			  [(ngModel)]="event.start"
-			  (ngModelChange)="refresh.next()"
-			  [altInput]="true"
-			  [convertModelValue]="true"
-			  [enableTime]="true"
-			  dateFormat="Y-m-dTH:i"
-			  altFormat="F j, Y H:i"
-			  placeholder="Not set"
+			  type="color"
+			  [(ngModel)]="event.color"
+			  (change)="refresh.next()"
 			/>
 		  </td>
 		  <td>
@@ -159,7 +135,7 @@
 			  class="form-control"
 			  type="text"
 			  mwlFlatpickr
-			  [(ngModel)]="event.end"
+			  [(ngModel)]="event.start"
 			  (ngModelChange)="refresh.next()"
 			  [altInput]="true"
 			  [convertModelValue]="true"
